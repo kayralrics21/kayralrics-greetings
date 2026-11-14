@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="A simple greeting that changes with your local time.">
+  <title>kayralrics — greetings</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      background: #000;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: #000;
+      color: #888;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    main {
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 48px 20px 0;
+    }
+
+    .greeting {
+      width: 100%;
+      text-align: center;
+      transform: translateY(12px);
+    }
+
+    h1 {
+      margin: 0;
+      color: #f22;
+      font-size: clamp(2.65rem, 8vw, 6.5rem);
+      font-weight: 750;
+      letter-spacing: -0.055em;
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+    }
+
+    .date {
+      margin: 24px 0 0;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      letter-spacing: 0.025em;
+      text-transform: lowercase;
+    }
+
+    .time {
+      margin: 8px 0 0;
+      color: #bbb;
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+    }
+
+    footer {
+      padding: 20px 16px 26px;
+      text-align: center;
+      color: #555;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 480px) {
+      .greeting { transform: translateY(0); }
+      .date { margin-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="greeting" aria-label="local time greeting">
+      <h1 id="greeting" aria-live="polite">hello.</h1>
+      <p class="date" id="date"></p>
+      <p class="time" id="time"></p>
+    </section>
+  </main>
+  <footer>kayralrics.net</footer>
+  <script>
+    const greetingElement = document.getElementById("greeting");
+    const dateElement = document.getElementById("date");
+    const timeElement = document.getElementById("time");
+    const dateFormatter = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric"
+    });
+    const timeFormatter = new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+
+    function update() {
+      const now = new Date();
+      const hour = now.getHours();
+      const greeting = hour >= 5 && hour < 12
+        ? "good morning."
+        : hour >= 12 && hour < 17
+          ? "good afternoon."
+          : hour >= 17 && hour < 21
+            ? "good evening."
+            : "good night.";
+
+      if (greetingElement.textContent !== greeting) {
+        greetingElement.textContent = greeting;
+      }
+
+      dateElement.textContent = dateFormatter.format(now).toLowerCase();
+      timeElement.textContent = timeFormatter.format(now);
+    }
+
+    update();
+    setInterval(update, 1000);
+    document.addEventListener("visibilitychange", update);
+  </script>
+</body>
+</html>
